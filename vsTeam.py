@@ -1,22 +1,14 @@
 from basketball_reference_web_scraper import client
 from sys import argv
-from fantasysites import Fanduel
+from fantasysites import FantasySites
+import fantasysites
 
 ## Find player matchup history vs opponent
-
-def calculate_fantasy_value(boxscore):
-
-    fantasyvalue = boxscore['points_scored'] * Fanduel.scoring + \
-                   boxscore['steals'] * Fanduel.steal + \
-                   boxscore['blocks'] * Fanduel.block + \
-                   boxscore['defensive_rebounds'] * Fanduel.rebound + \
-                   boxscore['offensive_rebounds'] * Fanduel.rebound - \
-                   boxscore['turnovers'] * Fanduel.turnover
-    return fantasyvalue
 
 
 if __name__ == '__main__':
     if len(argv) == 4:
+        fantasy_site = input("Enter Fantasy Site: ")
         name = f"{argv[1]} {argv[2]}"
         opp = f"{argv[3]}"
         player = client.search(term=name)
@@ -30,7 +22,4 @@ if __name__ == '__main__':
                 )
                 for game in boxscores:
                     if game['opponent'].name == opp:
-                        print(calculate_fantasy_value(game))
-
-
-
+                        print(fantasysites.calculate_fantasy_value(game, fantasy_site))
