@@ -1,8 +1,8 @@
 from basketball_reference_web_scraper import client
 from sys import argv
 import datetime
-from fantasysites import FantasySites
-import fantasysites
+from FantasySites import FantasySites
+import FantasySites
 
 
 ## Find player matchup history vs opponent
@@ -20,10 +20,10 @@ def get_player_boxscores(starting_year, year_range, player):
 
         for game in boxscores:
             if game['opponent'].name == opp:
-                player_avg += fantasysites.calculate_fantasy_value(game, fantasy_site)
+                player_avg += FantasySites.calculate_fantasy_value(game, fantasy_site)
                 total_games_vs_opp += 1
 
-    return player_avg/total_games_vs_opp, total_games_vs_opp
+    return player_avg / total_games_vs_opp, total_games_vs_opp
 
 
 def find_players(player_name):
