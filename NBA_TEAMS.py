@@ -30,6 +30,37 @@ class NBA_TEAMS:
         "UTAH_JAZZ": "Utah Jazz",
         "WASHINGTON_WIZARDS": "Washington Wizards",
     }
+    abbreviations = {
+        "ATL": "Atlanta Hawks",
+        "BOS": "Boston Celtics",
+        "BKN": "Brooklyn Nets",
+        "CHA": "Charlotte Hornets",
+        "CHI": "Chicago Bulls",
+        "CLE": "Cleveland Cavaliers",
+        "DAL": "Dallas Mavericks",
+        "DEN": "Denver Nuggets",
+        "DET": "Detroit Pistons",
+        "GSW": "Golden State Warriors",
+        "HOU": "Houston Rockets",
+        "IND": "Indiana Pacers",
+        "LAC": "Los Angeles Clippers",
+        "LAL": "Los Angeles Lakers",
+        "MEM": "Memphis Grizzlies",
+        "MIA": "Miami Heat",
+        "MIL": "Milwaukee Bucks",
+        "MIN": "Minnesota Timberwolves",
+        "NOP": "New Orleans Pelicans",
+        "NYK": "New York Knicks",
+        "ORL": "Orlando Magic",
+        "PHI": "Philadelphia 76ers",
+        "PHO": "Phoenix Suns",
+        "POR": "Portland Trail Blazers",
+        "SAC": "Sacramento Kings",
+        "SAS": "San Antonio Spurs",
+        "TOR": "Toronto Raptors",
+        "UTA": "Utah Jazz",
+        "WAS": "Washington Wizards",
+    }
 
 
 def find_NBA_team(user_input):
@@ -47,5 +78,15 @@ def find_NBA_team(user_input):
         return team
 
 
-if __name__ == '__main__':
-    find_NBA_team(input("Enter Team:"))
+def find_NBA_abrev(input):
+    names = NBA_TEAMS.abbreviations
+    team = ""
+    for name in names.items():
+        if input[1].lower() in name[1].lower():
+            team = name[0]
+
+    if team == "":
+        print("Team Not Found!!!")
+        exit(0)
+    else:
+        return team

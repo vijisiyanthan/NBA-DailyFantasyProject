@@ -37,8 +37,9 @@ def get_games_today(day, month, year):
     # need to implement getting games from today's date from basketball reference. For the time being just taking inputs
     # from users
     teams_playing = get_games_from_user()
-    for team in teams_playing:
-        print(team.home.team_stats)
+    for matchup in teams_playing:
+        print(matchup.opp.adv_player_stats.head())
+        print(matchup.home.adv_player_stats.head())
 
 
 def get_games_from_user():
