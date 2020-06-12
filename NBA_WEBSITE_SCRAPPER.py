@@ -24,9 +24,31 @@ def get_roster_player_list(team):
     return players_advanced_roster_stats, players_total_roster_stats
 
 
+def set_season_schedule(player_ids):
+    df = pd.DataFrame()
+    for id in player_ids:
+        client.regular_season_player_box_scores(player_identifier=id, season_end_year=2020,
+                                                output_type=OutputType.CSV,
+                                                output_file_path=f"./csv/boxscores/{id}_box_scores.csv")
+    for id in player_ids:
+        df_season_schedule = pd.read_csv(f"./csv/{id}_box_scores.csv")
+        df_season_schedule['slug'] = id
+        df = pd.concat([df, df_season_schedule])
+
+    return df
+
+
 def get_team_stats(team_name, team_stats_df, opp_stats_df, misc_stats_df):
     team_stats_row = (team_stats_df.loc[team_stats_df['Team'].str.contains(team_name)])
     opp_stats_row = (opp_stats_df.loc[opp_stats_df['Team'].str.contains(team_name)])
     misc_stats_row = (misc_stats_df.loc[misc_stats_df['Team'].str.contains(team_name, na=False)])
 
     return team_stats_row, opp_stats_row, misc_stats_row
+
+
+if __name__ == '__main__':
+    nba = League()
+    raptors_name = NBA_TEAMS.find_NBA_team("Toronto Raptors")
+    raptors = Team(raptors_name, nba)
+
+    print(raptors.boxscores)

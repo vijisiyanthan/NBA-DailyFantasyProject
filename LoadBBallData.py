@@ -14,8 +14,8 @@ class Matchup():
     home = None
 
     def __init__(self, opp_team, home_team, league):
-        self.opp = Team(opp_team,league)
-        self.home = Team(home_team,league)
+        self.opp = Team(opp_team, league)
+        self.home = Team(home_team, league)
 
 
 def get_box_score_date(date):
@@ -45,6 +45,7 @@ def get_games_today(day, month, year):
     cur.execute("DROP TABLE IF EXISTS team_stats;")
     cur.execute("DROP TABLE IF EXISTS opp_stats;")
     cur.execute("DROP TABLE IF EXISTS misc_stats;")
+    cur.execute("DROP TABLE IF EXISTS player_boxscores;")
 
     for matchup in teams_playing:
         matchup.opp.adv_player_stats.to_sql('players_adv_stats', con=conn, if_exists='append', chunksize=1000)
@@ -62,7 +63,8 @@ def get_games_today(day, month, year):
         matchup.opp.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
         matchup.home.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
 
-
+        matchup.home.boxscores.to_sql('player_boxscores', con=conn, if_exists='append', chunksize=1000)
+        matchup.opp.boxscores.to_sql('player_boxscores', con=conn, if_exists='append', chunksize=1000)
 
 
 def get_games_from_user():

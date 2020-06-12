@@ -9,6 +9,7 @@ class League:
     teams_season = None
     teams_opp = None
     teams_misc = None
+    teams_schedule = None
 
     def __init__(self):
         options = webdriver.ChromeOptions()
@@ -55,6 +56,7 @@ class Team:
     misc_stats = None
     adv_player_stats = None
     total_player_stats = None
+    boxscores = None
 
     def __init__(self, name, league):
         self.name = name
@@ -62,3 +64,4 @@ class Team:
         self.team_stats, self.opp_stats, self.misc_stats = NBA_WEBSITE_SCRAPPER.get_team_stats(
             name[1], team_stats_df=league.teams_season, misc_stats_df=league.teams_misc, opp_stats_df=league.teams_opp)
         self.adv_player_stats, self.total_player_stats = NBA_WEBSITE_SCRAPPER.get_roster_player_list(self)
+        self.boxscores = NBA_WEBSITE_SCRAPPER.set_season_schedule(self.adv_player_stats['slug'])
