@@ -1,8 +1,8 @@
 from basketball_reference_web_scraper import client
 from sys import argv
 import datetime
-from FantasySites import FantasySites
-import FantasySites
+from util.FantasySites import FantasySites
+from util import FantasySites
 
 
 ## Find player matchup history vs opponent

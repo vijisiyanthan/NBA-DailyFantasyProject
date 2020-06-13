@@ -1,5 +1,4 @@
-import NBA_TEAMS
-import NBA_WEBSITE_SCRAPPER
+from util import NBA_WEBSITE_SCRAPPER, NBA_TEAMS
 import pandas as pd
 from selenium import webdriver
 from bs4 import BeautifulSoup

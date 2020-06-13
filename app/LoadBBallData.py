@@ -1,12 +1,9 @@
-import csv
 import sqlite3
-import NBA_TEAMS
+from util import NBA_TEAMS
 import datetime
 from sys import argv, exit
-from NBA_TOOLS import Team
-from NBA_TOOLS import League
-from basketball_reference_web_scraper import client
-from basketball_reference_web_scraper.data import OutputType
+from util.NBA_TOOLS import Team
+from util.NBA_TOOLS import League
 
 
 class Matchup():
