@@ -1,9 +1,9 @@
 import sqlite3
-from util import NBA_TEAMS
+import NBA_TEAMS
 import datetime
 from sys import argv, exit
-from util.NBA_TOOLS import Team
-from util.NBA_TOOLS import League
+from NBA_TOOLS import Team
+from NBA_TOOLS import League
 
 
 class Matchup():

@@ -1,14 +1,14 @@
 from basketball_reference_web_scraper import client
 from basketball_reference_web_scraper.data import OutputType
-from util.NBA_TOOLS import *
+from NBA_TOOLS import *
 
 
 def get_roster_player_list(team):
     client.players_advanced_season_totals(season_end_year=2020, output_type=OutputType.CSV,
-                                          output_file_path="../csv/advanced_players.csv")
+                                          output_file_path="csv/advanced_players.csv")
 
     client.players_season_totals(season_end_year=2020, output_type=OutputType.CSV,
-                                 output_file_path="../csv/season_totals.csv")
+                                 output_file_path="csv/season_totals.csv")
 
     df_advanced_stats = pd.read_csv("../csv/advanced_players.csv")
     df_total_season_stats = pd.read_csv("../csv/season_totals.csv")
