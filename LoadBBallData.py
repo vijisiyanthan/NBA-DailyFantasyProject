@@ -31,7 +31,7 @@ def get_box_score_date(date):
         exit(0)
 
 
-def get_games_today(day, month, year):
+def get_games_today():
     # need to implement getting games from today's date from basketball reference. For the time being just taking inputs
     # from users
     teams_playing = get_games_from_user()
@@ -77,9 +77,3 @@ def get_games_from_user():
     return teams_playing
 
 
-if __name__ == '__main__':
-    if len(argv) == 2:
-        day, month, year = get_box_score_date(argv[1].split('/'))
-    elif len(argv) == 1:
-        day, month, year = get_box_score_date("")
-        get_games_today(day, month, year)

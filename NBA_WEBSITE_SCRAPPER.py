@@ -1,17 +1,20 @@
 from basketball_reference_web_scraper import client
 from basketball_reference_web_scraper.data import OutputType
 from NBA_TOOLS import *
+import pandas as pd
+
 
 
 def get_roster_player_list(team):
+
     client.players_advanced_season_totals(season_end_year=2020, output_type=OutputType.CSV,
-                                          output_file_path="csv/advanced_players.csv")
+                                          output_file_path="./csv/advanced_players.csv")
 
     client.players_season_totals(season_end_year=2020, output_type=OutputType.CSV,
-                                 output_file_path="csv/season_totals.csv")
+                                 output_file_path="./csv/season_totals.csv")
 
-    df_advanced_stats = pd.read_csv("../csv/advanced_players.csv")
-    df_total_season_stats = pd.read_csv("../csv/season_totals.csv")
+    df_advanced_stats = pd.read_csv("./csv/advanced_players.csv")
+    df_total_season_stats = pd.read_csv("./csv/season_totals.csv")
 
     players_advanced_roster_stats = df_advanced_stats.loc[df_advanced_stats['team'].str.contains(team.name[1].upper())]
     players_total_roster_stats = df_total_season_stats.loc[df_advanced_stats['team'].str.contains(team.name[1].upper())]
