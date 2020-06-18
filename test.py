@@ -1,45 +1,61 @@
-from basketball_reference_web_scraper import client
-import datetime, pytz
+import json
+import urllib.request
+from selenium import webdriver
 
-from basketball_reference_web_scraper.data import OutputType
+# options = webdriver.ChromeOptions()
+# options.add_argument('--headless')
+# options.add_argument('log-level=3')
+# driver = webdriver.Chrome(chrome_options=options)
+# URL = f"https://www.basketball-reference.com/leagues/NBA_2020.html"
+# driver.get(URL)
+# html = driver.page_source
+# driver.quit()
+urlreq = 'https://api.lineups.com/nba/fetch/lineups/current/brooklyn-nets'
 
-players = list(client.player_box_scores(day=1,month=1,year=2020))
+response = urllib.request.urlopen(urlreq)
 
-client.season_schedule(season_end_year=2020, output_type=OutputType.CSV, output_file_path="./2019_2020_season.csv")
+jresponse = json.load(response)
+starters = jresponse['starters']
 
-# Output all player box scores for January 1st, 2017 in JSON format to 1_1_2017_box_scores.csv
-client.regular_season_player_box_scores(player_identifier="westbru01",season_end_year=2020 ,output_type=OutputType.CSV, output_file_path="./1_1_2017_box_scores.csv")
+past_lineups = jresponse['past_lineups']
+freq_lineups = jresponse['frequent_lineups']
 
-schedule = client.season_schedule(season_end_year=2020)
+lst_past_lineups = dict()
+lst_freq_lineups = dict()
+lst_starters = list()
 
-date = datetime.datetime(year=2020,month=3,day=9,tzinfo=pytz.UTC)
-for game in schedule:
-    #print(f"{game['start_time'].year}")
-    if int(game["start_time"].year) == 2020 and int(game["start_time"].month) == 3\
-            and int(game["start_time"].day) == 9:
-        print("matchhhhhh")
-        print(f"{game}")
-    # print(game["start_time"])
-    # print(date)
+for i in range(5):
+    lineup = past_lineups[i]
+    result = lineup['result']
+    game = str(lineup['game']).split(' vs')
+    lst_players = dict()
+    for n in range(1, 6):
+        name = lineup[str(n)]['name']
+        position = lineup[str(n)]['position']
+        lst_players.update({name: position})
+    lst_past_lineups.update({game[0]: lst_players.items()})
 
-# for player in players:
-#     print(f'{player["name"]}: {player["made_three_point_field_goals"]}')
+for i in range(5):
+    lineup = freq_lineups[i]['players']
+    frequency = freq_lineups[i]['frequency']
+    lst_players = dict()
+    for n in range(5):
+        name = lineup[n]['name']
+        position = lineup[n]['position']
+        lst_players.update({name: position})
+    lst_freq_lineups.update({frequency: lst_players.items()})
+
+for i in range(5):
+    name = starters[i]['name']
+    position = starters[i]['position']
+    lst_starters.append({name: position})
+
+print(lst_starters)
+
+for item in lst_freq_lineups.items():
+    print(item)
 
 
-   # options = webdriver.ChromeOptions()
-   #  options.add_argument('--headless')
-   #  options.add_argument('log-level=3')
-   #  driver = webdriver.Chrome(chrome_options=options)
-   #  URL = f"https://www.basketball-reference.com/teams/{team.abr}/2020.html"
-   #  driver.get(URL)
-   #  html = driver.page_source
-   #  driver.quit()
-   #
-   #  soup = BeautifulSoup(html, 'html.parser')
-   #  team_roster_div = soup.find(id="all_roster")
-   #  team_roster_table = team_roster_div.find(id="roster")
-   #
-   #  df_list = pd.read_html(str(team_roster_table))
-   #  team_roster_df = df_list[0]
-   #  team_roster_df = team_roster_df.drop(columns=['No.', 'Ht', 'Wt', 'Birth Date', 'Unnamed: 6', 'Exp', 'College'])
-   #  team_roster_tuple = list(team_roster_df.itertuples(index=False, name=None))
+
+for item in lst_past_lineups.items():
+    print(item)

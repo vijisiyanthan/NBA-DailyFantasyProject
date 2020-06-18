@@ -4,9 +4,7 @@ from NBA_TOOLS import *
 import pandas as pd
 
 
-
 def get_roster_player_list(team):
-
     client.players_advanced_season_totals(season_end_year=2020, output_type=OutputType.CSV,
                                           output_file_path="./csv/advanced_players.csv")
 
@@ -45,10 +43,14 @@ def set_season_schedule(player_ids):
     return boxscores
 
 
-def get_team_stats(team_name, team_stats_df, opp_stats_df, misc_stats_df):
-    team_stats_row = (team_stats_df.loc[team_stats_df['Team'].str.contains(team_name)])
-    opp_stats_row = (opp_stats_df.loc[opp_stats_df['Team'].str.contains(team_name)])
+def get_team_stats(team_name, misc_stats_df):
     misc_stats_row = (misc_stats_df.loc[misc_stats_df['Team'].str.contains(team_name, na=False)])
+    return misc_stats_row
 
-    return team_stats_row, opp_stats_row, misc_stats_row
 
+def get_lineups(team_name):
+    team_name = str(team_name).split(' ')
+    for e in team_name:
+        team_name += e
+        team_name += '-'
+    print(team_name)

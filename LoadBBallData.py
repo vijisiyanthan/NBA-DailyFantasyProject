@@ -51,12 +51,6 @@ def get_games_today():
         matchup.opp.total_player_stats.to_sql('players_total_stats', con=conn, if_exists='append', chunksize=1000)
         matchup.home.total_player_stats.to_sql('players_total_stats', con=conn, if_exists='append', chunksize=1000)
 
-        matchup.opp.team_stats.to_sql('team_stats', con=conn, if_exists='append', chunksize=1000)
-        matchup.home.team_stats.to_sql('team_stats', con=conn, if_exists='append', chunksize=1000)
-
-        matchup.opp.opp_stats.to_sql('opp_stats', con=conn, if_exists='append', chunksize=1000)
-        matchup.home.opp_stats.to_sql('opp_stats', con=conn, if_exists='append', chunksize=1000)
-
         matchup.opp.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
         matchup.home.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
 
