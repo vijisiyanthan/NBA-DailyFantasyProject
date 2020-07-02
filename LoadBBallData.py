@@ -5,6 +5,8 @@ from sys import argv, exit
 from NBA_TOOLS import Team
 from NBA_TOOLS import League
 
+league = League()
+
 
 class Matchup():
     opp = None
@@ -39,27 +41,34 @@ def get_games_today():
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS players_adv_stats;")
     cur.execute("DROP TABLE IF EXISTS players_total_stats;")
-    cur.execute("DROP TABLE IF EXISTS team_stats;")
-    cur.execute("DROP TABLE IF EXISTS opp_stats;")
     cur.execute("DROP TABLE IF EXISTS misc_stats;")
     cur.execute("DROP TABLE IF EXISTS player_boxscores;")
+    cur.execute("DROP TABLE IF EXISTS matchups;")
 
+    cur.execute("CREATE TABLE matchups(home_team,away_team);")
+
+    matchups_list = dict()
     for matchup in teams_playing:
+        cur.execute("INSERT INTO matchups(home_team,away_team) VALUES (?,?);",
+                    [matchup.home.name[1], matchup.opp.name[1]])
+        matchups_list.update({matchup.home.name[1]: matchup.opp.name[1]})
         matchup.opp.adv_player_stats.to_sql('players_adv_stats', con=conn, if_exists='append', chunksize=1000)
         matchup.home.adv_player_stats.to_sql('players_adv_stats', con=conn, if_exists='append', chunksize=1000)
 
         matchup.opp.total_player_stats.to_sql('players_total_stats', con=conn, if_exists='append', chunksize=1000)
         matchup.home.total_player_stats.to_sql('players_total_stats', con=conn, if_exists='append', chunksize=1000)
 
-        matchup.opp.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
-        matchup.home.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
+        # matchup.opp.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
+        # matchup.home.misc_stats.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
 
         matchup.home.boxscores.to_sql('player_boxscores', con=conn, if_exists='append', chunksize=1000)
         matchup.opp.boxscores.to_sql('player_boxscores', con=conn, if_exists='append', chunksize=1000)
 
+    league.teams_misc.to_sql('misc_stats', con=conn, if_exists='append', chunksize=1000)
+    return matchups_list
+
 
 def get_games_from_user():
-    league = League()
     number_games_today = int(input("How many games are played today:"))
     teams_playing = list()
     for game in range(number_games_today):
@@ -69,5 +78,3 @@ def get_games_from_user():
         matchup = Matchup(opp, home, league)
         teams_playing.append(matchup)
     return teams_playing
-
-

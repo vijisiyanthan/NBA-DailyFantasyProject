@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import sqlite3
 import FantasySites
+from pydfs_lineup_optimizer import get_optimizer, Site, Sport, Player, CSVLineupExporter
 
 
 def get_team_stats():
@@ -12,16 +13,19 @@ def get_team_stats():
     # Remove unneeded index and Rk  columns in all dataframe tables
     columns = ['index', 'Rk']
     df_misc_stats = df_misc_stats.drop(columns=columns)
-    final_columns = ['Team','MOV', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA', 'eFG%.1', 'TOV%.1',
+    final_columns = ['Team', 'MOV', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA', 'eFG%.1',
+                     'TOV%.1',
                      'DRB%', 'FT/FGA.1']
     df_misc_stats = df_misc_stats[final_columns]
     df_misc_stats = df_misc_stats.rename(
         columns={'eFG%.1': 'oppEFG%', 'TOV%.1': 'oppTOV%', 'FT/FGA.1': 'oppFT/FGA', 'eFG%': 'EFG%'})
 
-    final_columns = ['MOV', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'EFG%', 'TOV%', 'ORB%', 'FT/FGA', 'oppEFG%', 'oppTOV%',
+    final_columns = ['MOV', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'EFG%', 'TOV%', 'ORB%', 'FT/FGA', 'oppEFG%',
+                     'oppTOV%',
                      'DRB%', 'oppFT/FGA']
 
     df_misc_stats[final_columns] = df_misc_stats[final_columns].astype(float)
+    df_misc_stats['Team'] = df_misc_stats.apply(lambda row: str.split(row['Team'], '*')[0], axis=1)
     return df_misc_stats
 
 
@@ -45,9 +49,11 @@ def get_player_stats():
     df_players_total_stats['MIN/G'] = df_players_total_stats['minutes_played'] / df_players_total_stats['games_played']
     df_players_total_stats['FPS/M'] = df_players_total_stats['Fantasy Points Scored'] / df_players_total_stats[
         'minutes_played']
+    df_players_total_stats['Fouls/G'] = df_players_total_stats['personal_fouls'] / df_players_total_stats[
+        'games_played']
 
     df_players_total_stats = df_players_total_stats[
-        ['slug', 'name', 'team', 'positions', 'games_played', 'FPS/G', 'MIN/G', 'FPS/M']]
+        ['slug', 'name', 'team', 'positions', 'games_played', 'FPS/G', 'MIN/G', 'FPS/M', 'Fouls/G']]
 
     # Handling advanced player stats
     df_players_adv_stats = df_players_adv_stats.drop(
@@ -69,9 +75,14 @@ def get_player_stats():
         lambda
             row: 0 if row.attempted_field_goals == 0 else row.attempted_three_point_field_goals / row.attempted_field_goals,
         axis=1)
+    df_players_boxscores['minutes_played'] = df_players_boxscores.apply(
+        lambda
+            row: 0 if row.seconds_played == 0 else row.seconds_played / 60,
+        axis=1)
 
     df_players_boxscores = df_players_boxscores[
-        ['date', 'slug', 'team', 'location', 'opponent', 'outcome', 'Fantasy Points Scored', 'A/TO', 'ThreePointRate']]
+        ['date', 'slug', 'team', 'location', 'opponent', 'outcome', 'minutes_played', 'Fantasy Points Scored', 'A/TO',
+         'ThreePointRate']]
 
     #####
 
@@ -117,22 +128,29 @@ def get_team_lineups(teams_names):
         for i in range(5):
             lineup = freq_lineups[i]['players']
             frequency = freq_lineups[i]['frequency']
-            lst_players = dict()
+            lst_players = list()
             for n in range(5):
                 name = lineup[n]['name']
                 position = lineup[n]['position']
-                lst_players.update({name: position})
-            lst_freq_lineups.update({frequency: lst_players.items()})
+                lst_players.append(name)
+            lst_freq_lineups.update({frequency: lst_players})
 
         for i in range(5):
             name = starters[i]['name']
             position = starters[i]['position']
-            lst_starters.append({name: position})
+            lst_starters.append(name)
 
         team_lineup = team_lineups(lst_starters, lst_past_lineups, lst_freq_lineups)
         lineups.update({team: team_lineup})
 
     return lineups
+
+
+def get_team_matchups():
+    # Pulling stats from table in fantasy.db
+    conn = sqlite3.connect("fantasy.db")
+    df = pd.read_sql_query("SELECT * FROM matchups;", conn)
+    return df
 
 
 class team_lineups():
@@ -147,8 +165,10 @@ class FantasyDatabase:
     player_stats = None
     boxscores = None
     lineups = None
+    matchups = None
 
     def __init__(self):
         self.team_stats = get_team_stats()
         self.player_stats, self.boxscores = get_player_stats()
         self.lineups = get_team_lineups(self.player_stats['team'].unique())
+        self.matchups = get_team_matchups()

@@ -24,6 +24,8 @@ def get_league_teams_stats():
 
     df_list = pd.read_html(str(misc_stats_table))
     misc_stats_df = df_list[0]
+    misc_stats_df = misc_stats_df.dropna()
+    misc_stats_df = misc_stats_df.loc[misc_stats_df['Team'] != 'Team']
 
     return misc_stats_df
 
@@ -45,7 +47,6 @@ class Team:
 
     def __init__(self, name, league):
         self.name = name
-        self.abr = NBA_TEAMS.find_NBA_abrev(name)
         self.misc_stats = NBA_WEBSITE_SCRAPPER.get_team_stats(
             name[1], misc_stats_df=league.teams_misc)
         self.adv_player_stats, self.total_player_stats = NBA_WEBSITE_SCRAPPER.get_roster_player_list(self)

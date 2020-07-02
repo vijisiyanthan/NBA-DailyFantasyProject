@@ -37,7 +37,7 @@ def set_season_schedule(player_ids):
     dates = dates.date.unique()
     dates.sort()
     last_game_date = pd.Timestamp((max(dates))).to_datetime64()
-    game_fifteen_date = pd.Timestamp(dates[-15]).to_datetime64()
+    game_fifteen_date = pd.Timestamp(dates[-14]).to_datetime64()
     boxscores = (df.loc[(df['date'] >= game_fifteen_date) & (df['date'] <= last_game_date)])
     boxscores = boxscores.reset_index()
     return boxscores

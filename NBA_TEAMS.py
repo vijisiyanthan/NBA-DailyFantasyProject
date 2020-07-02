@@ -41,7 +41,7 @@ class NBA_TEAMS:
         "DAL": "Dallas Mavericks",
         "DEN": "Denver Nuggets",
         "DET": "Detroit Pistons",
-        "GSW": "Golden State Warriors",
+        "GS": "Golden State Warriors",
         "HOU": "Houston Rockets",
         "IND": "Indiana Pacers",
         "LAC": "Los Angeles Clippers",
@@ -51,14 +51,14 @@ class NBA_TEAMS:
         "MIL": "Milwaukee Bucks",
         "MIN": "Minnesota Timberwolves",
         "NOP": "New Orleans Pelicans",
-        "NYK": "New York Knicks",
+        "NY": "New York Knicks",
         "ORL": "Orlando Magic",
         "OKC": "Oklahoma City",
         "PHI": "Philadelphia 76ers",
         "PHO": "Phoenix Suns",
         "POR": "Portland Trail Blazers",
         "SAC": "Sacramento Kings",
-        "SAS": "San Antonio Spurs",
+        "SA": "San Antonio Spurs",
         "TOR": "Toronto Raptors",
         "UTA": "Utah Jazz",
         "WAS": "Washington Wizards",
@@ -84,7 +84,20 @@ def find_NBA_abrev(input):
     names = NBA_TEAMS.abbreviations
     team = ""
     for name in names.items():
-        if input[1].lower() in name[1].lower():
+        if input == name[0]:
+            team = name[1]
+
+    if team == "":
+        print("Team Not Found!!!")
+        exit(0)
+    else:
+        return team.upper()
+
+def get_NBA_abrev(input):
+    names = NBA_TEAMS.abbreviations
+    team = ""
+    for name in names.items():
+        if input == name[1].upper():
             team = name[0]
 
     if team == "":
